@@ -906,6 +906,20 @@ func (client *Client) Zadd(key string, value []byte, score float64) (bool, error
 	return res.(int64) == 1, nil
 }
 
+func (client *Client) Zmadd(key string, values map[string]float64 ) (bool, error) {
+      args := []string{key}
+      for value,score := range values {
+          args = append(args, strconv.FormatFloat(score, 'f', -1, 64))
+          args = append(args, value)
+      }
+      res, err := client.sendCommand("ZADD", args...)
+      if err != nil {
+          return false, err
+      }
+  
+      return res.(int64) >= 1, nil
+}
+  
 func (client *Client) Zrem(key string, value []byte) (bool, error) {
 	res, err := client.sendCommand("ZREM", key, string(value))
 	if err != nil {
