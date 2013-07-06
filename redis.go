@@ -944,13 +944,17 @@ func (client *Client) Zrevrank(key string, value []byte) (int, error) {
 	return int(res.(int64)), nil
 }
 
-func (client *Client) Zrange(key string, start int, end int) ([][]byte, error) {
-	res, err := client.sendCommand("ZRANGE", key, strconv.Itoa(start), strconv.Itoa(end))
-	if err != nil {
-		return nil, err
-	}
-
-	return res.([][]byte), nil
+func (client *Client) Zrange(key string, start int, end int,WITHSCORES ...string) ([][]byte, error) {
+      args := []string{key,strconv.Itoa(start), strconv.Itoa(end)}
+      if len(WITHSCORES) == 1 && WITHSCORES[0] == "WITHSCORES" {
+          args = append(args,"WITHSCORES")
+      }    
+      res, err := client.sendCommand("ZRANGE", args...)
+      if err != nil {
+          return nil, err
+      }    
+  
+      return res.([][]byte), nil
 }
 
 func (client *Client) Zrevrange(key string, start int, end int) ([][]byte, error) {
