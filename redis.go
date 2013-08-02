@@ -756,6 +756,18 @@ func (client *Client) Sadd(key string, value []byte) (bool, error) {
 
 	return res.(int64) == 1, nil
 }
+//Sadd mutiple members, with redis >=2.4
+func (client *Client) Smadd(key string, members []string ) (bool, error) {
+    args := []string{key}
+    args = append(args, members...)
+    res, err := client.sendCommand("SADD", args...)
+
+    if err != nil {
+        return false, err
+    }
+
+    return res.(int64) >= 1, nil
+}
 
 func (client *Client) Srem(key string, value []byte) (bool, error) {
 	res, err := client.sendCommand("SREM", key, string(value))
